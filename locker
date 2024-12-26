@@ -1,0 +1,45 @@
+#include <Key pad. h>
+char* password = "720"; // change password here just pick any 3number .
+int position = 0;
+const byte ROWS = 4;
+const byte COLS = 4;
+char keys[ROWS][COLS] = {{'1','2','3','A’},
+{'4','5','6','B’},
+{'7','8','9','C’},
+{'*','0','#',’D’}
+};
+byte row Pins[ROWS] = {2,3,4,5};
+byte col Pins[COLS] = {6,7,8,9};
+Keypad key pad = Keypad( make Keymap(keys), row Pins, col Pins, ROWS, COLS );
+int Lock = 11;
+void setup( )
+{
+Pin Mode(Lock, OUTPUT);
+Locked Position(true);
+}
+void loop( )
+{
+char key = keypad . get Key( );
+if (key == '*' || key == ‘#’)
+{
+position = 0;
+Locked Position(true);
+}
+if (key == password[position])
+{position ++;
+}
+if (position == 3)
+{
+Locked Position(false);
+}
+delay(100);
+}
+void Locked Position(int locked)
+{
+if (locked){digital Write(Lock, LOW);
+}
+Else
+{
+digital Write(Lock, HIGH);
+}
+}
