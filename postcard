@@ -1,0 +1,145 @@
+// Postcard.java
+public class Postcard {
+    String title;
+    String message;
+    String deliveryDate;
+
+    public Postcard(String title, String message, String deliveryDate) {
+        this.title = title;
+        this.message = message;
+        this.deliveryDate = deliveryDate;
+    }
+}
+
+
+import java.util.ArrayList;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+public class PostcardManager {
+    private static ArrayList<Postcard> postcards = new ArrayList<>();
+
+    public static void createPostcard(String title, String message, String deliveryDate) {
+        Postcard newPostcard = new Postcard(title, message, deliveryDate);
+        postcards.add(newPostcard);
+        System.out.println("Postcard created successfully!");
+    }
+
+    public static void viewUnlockablePostcards(SimpleDateFormat dateFormat, Date currentDate) {
+        System.out.println("\nUnlockable Postcards:");
+        boolean foundUnlockable = false;
+        for (Postcard postcard : postcards) {
+            try {
+                Date postcardDate = dateFormat.parse(postcard.deliveryDate);
+                if (!postcardDate.after(currentDate)) {
+                    System.out.println("Title: " + postcard.title);
+                    System.out.println("Message: " + postcard.message);
+                    System.out.println("Delivery Date: " + postcard.deliveryDate);
+                    System.out.println("Status: Unlockable");
+                    System.out.println("-----------------------------");
+                    foundUnlockable = true;
+                }
+            } catch (Exception e) {
+                System.out.println("Error parsing date for postcard.");
+            }
+        }
+
+        if (!foundUnlockable) {
+            System.out.println("No unlockable postcards yet.");
+        }
+    }
+
+    public static void viewAllPostcards() {
+        System.out.println("\nAll Postcards (by name):");
+        if (postcards.size() > 0) {
+            for (int i = 0; i < postcards.size(); i++) {
+                System.out.println((i + 1) + ". " + postcards.get(i).title);
+            }
+        } else {
+            System.out.println("No postcards available.");
+        }
+    }
+
+    public static void deletePostcard(int index) {
+        if (index >= 0 && index < postcards.size()) {
+            postcards.remove(index);
+            System.out.println("Postcard deleted successfully.");
+        } else {
+            System.out.println("Invalid index. No postcard deleted.");
+        }
+    }
+
+    public static ArrayList<Postcard> getPostcards() {
+        return postcards;
+    }
+}
+
+
+
+import java.util.Scanner;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+public class TimeTrace {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date currentDate = new Date();
+
+        while (true) {
+            System.out.println("Choose an option:");
+            System.out.println("1. Create a new postcard");
+            System.out.println("2. View unlockable postcards");
+            System.out.println("3. Exit");
+            System.out.println("4. Delete a postcard");
+            System.out.println("5. View all postcards (by name)");
+
+            int choice = scanner.nextInt();
+            scanner.nextLine();  // To consume the newline character
+
+            if (choice == 1) {
+                // Create a new postcard
+                System.out.print("Enter title: ");
+                String title = scanner.nextLine();
+                System.out.print("Enter message: ");
+                String message = scanner.nextLine();
+                System.out.print("Enter delivery date (YYYY-MM-DD): ");
+                String deliveryDate = scanner.nextLine();
+
+                // Call createPostcard method from PostcardManager
+                PostcardManager.createPostcard(title, message, deliveryDate);
+            } else if (choice == 2) {
+                // View unlockable postcards
+                PostcardManager.viewUnlockablePostcards(dateFormat, currentDate);
+            } else if (choice == 4) {
+                // Delete a postcard
+                System.out.println("\nWhich postcard would you like to delete? (Enter the index number):");
+                if (PostcardManager.getPostcards().size() > 0) {
+                    // Display postcards with index
+                    for (int i = 0; i < PostcardManager.getPostcards().size(); i++) {
+                        System.out.println(i + ". " + PostcardManager.getPostcards().get(i).title);
+                    }
+
+                    int deleteIndex = scanner.nextInt();
+                    scanner.nextLine();  // To consume the newline character
+
+                    // Call deletePostcard method from PostcardManager
+                    PostcardManager.deletePostcard(deleteIndex);
+                } else {
+                    System.out.println("No postcards available to delete.");
+                }
+            } else if (choice == 5) {
+                // View all postcards by title
+                PostcardManager.viewAllPostcards();
+            } else if (choice == 3) {
+                // Exit the program
+                System.out.println("Exiting...");
+                break;
+            } else {
+                System.out.println("Invalid choice. Please try again.");
+            }
+        }
+
+        scanner.close();
+    }
+}
